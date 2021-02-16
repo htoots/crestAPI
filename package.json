@@ -1,0 +1,15 @@
+{
+  "name": "crestapi",
+  "version": "0.0.1",
+  "description": "Simple REST API to be used with a database",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "better-sqlite3": "^7.1.2",
+    "express": "^4.17.1"
+  }
+}
