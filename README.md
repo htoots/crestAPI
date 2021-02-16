@@ -1,2 +1,2 @@
-# crestAPI
+# c.restAPI
 Simple Express API for getting database information
