@@ -1,0 +1,94 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    title!= "D3.js Practice"
+    script(src='/d3.js')
+    style
+      include view.css
+    block head
+  body
+    section#practice
+      header Graph
+      script(type='text/javascript').
+        var stringData = !{JSON.stringify(data)};
+        var formatTime = d3.timeFormat('%d-%b-%y');
+        var data = [];
+        stringData.forEach(p => {
+          data.push({date: new Date(p.timestamp), inter: p.calcIntermediate});
+        });
+
+        const w = 1000, h = 500;
+
+        var svg = d3.select("body")
+          .append("svg")
+            .attr("width", w + 50)
+            .attr("height", h + 50)
+          .append("g")
+            .attr("transform", "translate(50,50)");
+
+        var xScale = d3.scaleTime()
+          .range([0, w])
+          .domain(d3.extent(data, p => {return p.date}));
+
+        var yScale = d3.scaleLinear()
+          .range([0, h])
+          .domain([d3.max(data, p => {return p.inter}) + 100, d3.min(data, p => {return p.inter}) - 100]);
+
+        var d3Line = d3.line()
+          .x(d => {return xScale(d.date)})
+          .y(d => {return yScale(d.inter)})
+          .curve(d3.curveMonotoneX);
+
+        var div = d3.select("body")
+          .append("div")
+          .attr("class", "tooltip")
+          .style("opacity", 0);
+
+        svg.append("g")
+          .call(d3.axisBottom().scale(xScale));
+
+        svg.append("g")
+          .call(d3.axisLeft().scale(yScale));
+
+        svg.append("path")
+          .data([data])
+          .attr("class", "line")
+          .attr("d", d3Line);
+
+        var radius = 2;
+        svg.selectAll(".dot")
+          .data(data)
+          .enter()
+          .append("circle")
+          .attr("cx", d => {return xScale(d.date)})
+          .attr("cy", d => {return yScale(d.inter)})
+          .attr("r", radius)
+          .on("mouseover", handleMouseOver)
+          .on("mouseout", handleMouseOut);
+
+        function handleMouseOver(d, i) {
+          console.log(i);
+          d3.select(this)
+            .attr("fill", "orange")
+            .attr("r", radius*3);
+
+          div.transition()
+            .duration(200)
+            .style("opacity", 0.9);
+          div.html("test<br/>"+i.inter)
+            .style("left", d.x + "px")
+            .style("top", (d.y - 28) + "px");
+          console.log(div.style("left"));
+
+          
+        }
+        function handleMouseOut(d) {
+          console.log(d);
+          d3.select(this)
+            .attr("fill", "black")
+            .attr("r", radius);
+          div.transition()
+            .duration(500)
+            .style("opacity", 0);
+        }

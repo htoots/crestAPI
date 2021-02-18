@@ -5,8 +5,9 @@ const {BotDatabase} = require('./classes/database');
 const database = new BotDatabase(path.resolve('/home/prod/ratingSaver/data/cronDatabase.sqlite'));
 
 const app = express();
-app.set('view engine', 'ejs');
-app.use(express.static(path.resolve(__dirname)));
+app.set('view engine', 'pug');
+
+app.use(express.static('public'));
 
 app.get('/', (req, res) => {
   res.send("API");
@@ -14,7 +15,7 @@ app.get('/', (req, res) => {
 
 app.get('/api/user/:id', (req, res) => {
   const data = database.getUserRatings(req.params.id);
-  res.send(data);
+  res.json(data);
 });
 
 // 76561199031495861 -- Example ID
